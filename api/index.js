@@ -20,16 +20,12 @@
 const server = require('./src/app.js');
 const { conn, Breed, Temperament } = require('./src/db.js');
 const axios = require('axios');
+const { getAllBreedsFromApi } = require('./src/controllers/breeds');
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(async () => {
-  let breeds, searchId;
 
-  breeds = await axios.get('https://api.thedogapi.com/v1/breeds');
-  console.log(breeds.data[0]);
-
-  searchId = await axios.get(`https://api.thedogapi.com/v1/breeds/search?q=${breeds.data[0].name}`);
-  console.log(searchId.data[0]);
+  getAllBreedsFromApi();
 
   server.listen(3001, () => {
     console.log('%s listening at 3001'); // eslint-disable-line no-console
@@ -66,3 +62,11 @@ const t1 = await Temperament.create({ name: "Stubborn" });
 
   // await console.log(JSON.stringify(busquedaAll, null, 2));
 */
+
+// let breeds, searchId;
+
+  // breeds = await axios.get('https://api.thedogapi.com/v1/breeds');
+  // console.log(breeds.data[0]);
+
+  // searchId = await axios.get(`https://api.thedogapi.com/v1/breeds/search?q=${breeds.data[0].name}`);
+  // console.log(searchId.data[0]);

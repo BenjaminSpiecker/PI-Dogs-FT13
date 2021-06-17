@@ -1,0 +1,43 @@
+.container {
+   width: 95%;
+   margin: 0 auto;
+}
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.card {
+    width: 12rem;
+    margin: 1rem;
+    border: 1px solid;
+}
+.cardImgTop {
+    width: 100%;
+}
+.cardBody {
+    
+}
+.cardTitle {
+
+}
+.cardText {
+
+}
+.page {
+    
+}
+.pagination {
+    border: 1px solid;
+    border-radius: 0.2rem;
+    padding: 0;
+}
+.pageItem {
+    display: inline-block;
+    list-style: none;
+    padding: 0.3rem 0.6rem;   
+}
+.pageLink {
+    text-decoration: none;
+}
+

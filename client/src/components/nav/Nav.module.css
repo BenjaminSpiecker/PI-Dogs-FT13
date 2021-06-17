@@ -1,0 +1,36 @@
+.navbar {
+    background:rgb(70, 70, 80);
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    
+}
+.logo {
+    color: white;
+    margin: 0;
+    padding: 0.3rem;
+}
+.navbarNav {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+}
+.navItem {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+.navLink {
+    color: white;
+    text-decoration: none;
+    padding: 1rem;
+}
+.navLink:hover {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
