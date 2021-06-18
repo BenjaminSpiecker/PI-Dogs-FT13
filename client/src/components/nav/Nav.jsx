@@ -8,13 +8,13 @@ function Nav() {
             <h1 className={style.logo}>DogsApp</h1>
             <ul className={style.navbarNav }>
                 <li className={style.navItem}>
-                    <NavLink to="/" className={style.navLink} activeClassName="activo">Home</NavLink>
+                    <NavLink to="/" className={style.navLink} activeClassName={style.active}>Home</NavLink>
                     </li>
                 <li className={style.navItem}>
-                    <NavLink to="/breeds" className={style.navLink} activeClassName="activo">Breeds</NavLink>
+                    <NavLink to="/breeds" className={style.navLink} activeClassName={style.active}>Breeds</NavLink>
                     </li>
                 <li className={style.navItem}>
-                    <NavLink to="/new-activity" className={style.navLink} activeClassName="activo">New Breeds</NavLink>
+                    <NavLink to="/new-breed" className={style.navLink} activeClassName={style.active}>New Breeds</NavLink>
                     </li>
             </ul>
         </nav>

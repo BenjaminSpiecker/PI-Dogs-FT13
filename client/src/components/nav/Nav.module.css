@@ -23,14 +23,20 @@
     list-style: none;
     display: flex;
     align-items: center;
+    border-radius: 0.5rem;
 }
 .navLink {
     color: white;
     text-decoration: none;
     padding: 1rem;
+    border-radius: 0.3rem;
 }
 .navLink:hover {
     color: white;
     text-decoration: none;
     cursor: pointer;
+    background: rgb(100, 100, 107);
+}
+.active{
+    background: rgb(100, 100, 107);
 }

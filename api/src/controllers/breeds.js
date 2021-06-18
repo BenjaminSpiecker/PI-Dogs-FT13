@@ -1,5 +1,5 @@
 const { Breed, Temperament } = require('../db');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const axios = require('axios');
 
  async function getAllBreedsFromApi() {
@@ -21,6 +21,7 @@ const axios = require('axios');
         life_span_max: max_ls,
         life_span_min: min_ls,
         image_url: breed.image.url,
+        image_id: breed.image.id
       });
 
       if(breed.temperament) {
@@ -49,25 +50,98 @@ function getAllBreeds(req, res, next) {
 
   if(offset && orderValue && orderOption) {
 
-    return Breed.findAndCountAll({
+    return Breed.findAll({
+      include: [{
+        model: Temperament,
+        attributes: [ 'id','name'],
+        through: {
+          attributes: []
+        }
+      }],
       limit: 8,
       offset: offset,
       order: [
         [orderOption, orderValue]
       ]
-    }).then( response => {
-      return res.send(response);
-    })
+    }).then( async (rows) => {
+        const count = await Breed.count();
+        return res.send({ count, rows });
+      })
     .catch(error => next(error));
   }
   
-  return Breed.findAndCountAll({
+  return Breed.findAll({
     limit: 8,
-    offset: 0
-  }).then( response => {
-    return res.send(response);
-  })
-  .catch(error => next(error));
+    offset: 0,
+    include: [{
+      model: Temperament,
+      attributes: [ 'id','name'],
+      through: {
+        attributes: []
+      }
+    }]
+  }).then( async (rows) => {
+      const count = await Breed.count();
+      return res.send({ count, rows });
+    })
+    .catch(error => next(error));
+}
+
+async function getBreedByName(req, res, next) {
+
+  const {name, offset, orderValue, orderOption} = req.query;
+
+  if(name && offset && orderValue && orderOption) {
+
+    return Breed.findAll({
+      where: {
+        name: { [Op.iLike]: '%' + name + '%' }
+      },
+      include: [{
+        model: Temperament,
+        attributes: [ 'id','name'],
+        through: {
+          attributes: []
+        }
+      }],
+      limit: 8,
+      offset: offset,
+      order: [
+        [orderOption, orderValue]
+      ]
+    }).then( async (rows) => {
+        const count = await Breed.count({
+          where: {
+            name: { [Op.iLike]: '%' + name + '%' }
+          }
+        });
+        return res.send({ count, rows });
+      })
+    .catch(error => next(error));
+  }
+  
+  return Breed.findAll({
+    where: {
+      name: { [Op.iLike]: '%' + name + '%' }
+    },
+    limit: 8,
+    offset: 0,
+    include: [{
+      model: Temperament,
+      attributes: [ 'id','name'],
+      through: {
+        attributes: []
+      }
+    }]
+  }).then( async (rows) => {
+      const count = await Breed.count({
+        where: {
+          name: { [Op.iLike]: '%' + name + '%' }
+        }
+      });
+      return res.send({ count, rows });
+    })
+    .catch(error => next(error));
 }
 
 function stringParseToNumbers(string) {
@@ -94,6 +168,7 @@ function stringParseToNumbers(string) {
 }
 
 module.exports = {
+  getBreedByName,
   getAllBreedsFromApi,
   getAllBreeds
 }

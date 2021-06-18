@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom'
-import { getBreeds } from '../../actions/index';
+import { getBreeds, getBreedByName } from '../../actions/index';
 import style from './Breeds.module.css';
 
 function Breeds(props) {
@@ -17,23 +17,29 @@ function Breeds(props) {
         option: 'name',
         value: 'ASC'
     });
+    const [breedToSearch, setBreedToSearch] = useState('');
 
     useEffect(() => {
-        props.getBreeds(offset, order); // , filter, order
+        if(breedToSearch) {
+            props.getBreedByName(offset, order, breedToSearch);
+        } else {
+            props.getBreeds(offset, order);  // , filter, order
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [offset, limit, filter, order]);
+    }, [offset, limit, filter, order, breedToSearch]);
+
 
     function showBreeds() {
-        // console.log(props.breeds);
+        console.log(props.breeds);
         return (props.breeds.rows && props.breeds.rows.length > 0)
             ? props.breeds.rows.map( (breed, index) => 
             <div key={breed.id} className={style.card}>
                 <img src={breed.image_url} alt={breed.name} className={style.cardImgTop}/>
                 <div className={style.cardBody}>
                     <h3 className={style.cardTitle}>{breed.name}</h3>
-                    <p className={style.cardText}>Heigth: {breed.height_min} - {breed.height_max}cm</p>
-                    <p className={style.cardText}>Weight: {breed.weight_min} - {breed.weight_max}Kg</p>
-                    <p className={style.cardText}>Life span: {breed.life_span_min} - {breed.life_span_max} years</p>
+                    {breed.temperaments.map( temperament => 
+                        <p className={style.cardText} key={temperament.id}>{temperament.name}</p>
+                    )}
                 </div>
             </div>
             )
@@ -42,7 +48,7 @@ function Breeds(props) {
               </div>
     }
     function showPagination() {
-        let pageItems = []
+        let pageItems = [];
         if(props.breeds.count && props.breeds.count > 0) {
             for(let i=1; i <= Math.ceil(props.breeds.count/limit); i++) {
                 pageItems.push(
@@ -58,8 +64,8 @@ function Breeds(props) {
         const page = e.target.childNodes[0].data;
         setOffset(page * limit - limit);
     }
-    function handleSearch() {
-
+    function handleSearch(e) {
+        setBreedToSearch(e.target.value);
     }
 
     function handleSubmit(e) {
@@ -88,9 +94,6 @@ function Breeds(props) {
 
     return (
         <div className={style.container}>
-            {/* Botones/Opciones para filtrar por continente y por tipo de actividad turística
-                Botones/Opciones para ordenar tanto ascendentemente como descendentemente los países 
-                por orden alfabético y por cantidad de población */}
             <form onSubmit={handleSubmit}>
                 <label>Search: </label>
                 <input type="text" name="search" id="search" onChange={handleSearch}/>
@@ -114,7 +117,7 @@ function Breeds(props) {
                     <option value="breed">Breed</option>
                 </select>
                 <hr/>
-                <input type="submit" value="Submit"/>
+                {/* <input type="submit" value="Submit"/> */}
             </form>
             <div className={style.cards}>
                 {showBreeds()}
@@ -135,7 +138,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({getBreeds}, dispatch);
+    return bindActionCreators({getBreeds, getBreedByName}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Breeds);

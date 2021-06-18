@@ -37,6 +37,9 @@ module.exports = (sequelize) => {
     },
     image_url: {
       type: DataTypes.STRING
+    },
+    image_id: {
+      type: DataTypes.STRING
     }
   }, {tableName: 'breeds'});
 };
