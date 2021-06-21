@@ -1,6 +1,6 @@
 const initialState = {
+    temperaments: [],
     breeds: [],
-    
 }
 
 export default function reducer(state = initialState, action) {
@@ -14,6 +14,11 @@ export default function reducer(state = initialState, action) {
             return {
                 ...state,
                 breeds: action.payload
+            };
+        case 'GET_TEMPERAMENTS':
+            return {
+                ...state,
+                temperaments: action.payload
             };
         default:
             return state;

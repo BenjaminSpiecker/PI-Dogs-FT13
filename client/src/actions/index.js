@@ -4,13 +4,15 @@ import axios from 'axios';
 //   return { type: "ADD_MOVIE_FAVORITE", payload };
 // }
 
-export function getBreeds(offset, order) {
-  const {value, option} = order;
+export function getBreeds(offset, order, filter) {
+ 
+  const params = 'offset=' + offset 
+    + '&orderValue=' + order.value
+    + '&orderOption=' + order.option
+    + '&filterValue=' + filter.value
+    + '&filterOption=' + filter.option;
+
   return function(dispatch) {
-    
-    const params = 'offset=' + offset 
-      + '&orderValue=' + value
-      + '&orderOption=' + option;
 
     return axios.get(`http://localhost:3001/dogs?${params}`)
       .then(response => response.data)
@@ -21,15 +23,16 @@ export function getBreeds(offset, order) {
   };
 }
 
-export function getBreedByName(offset, order, name) {
-  const {value, option} = order;
+export function getBreedByName(offset, order, filter, name) {
 
   return function(dispatch) {
 
-    const params = 'name=' + name
-      + '&offset=' + offset 
-      + '&orderValue=' + value
-      + '&orderOption=' + option;
+    const params = 'offset=' + offset 
+      + '&orderValue=' + order.value
+      + '&orderOption=' + order.option
+      + '&filterValue=' + filter.value
+      + '&filterOption=' + filter.option
+      + '&name=' + name;
 
     return axios.get(`http://localhost:3001/dogs?${params}`)
       .then(response => response.data)
@@ -40,8 +43,18 @@ export function getBreedByName(offset, order, name) {
   }
 }
 
-// ?limit=${limit}&offset=${offset}
-// &continent=${filter.continent}&orderName=${order.name}&orderPopulation=${order.population}
+export function getTemperaments() {
+ 
+  return function(dispatch) {
 
-const actions = {getBreeds, getBreedByName};
+    return axios.get(`http://localhost:3001/temperaments`)
+      .then(response => response.data)
+      .then(data => {
+        dispatch({ type: "GET_TEMPERAMENTS", payload: data });
+      })
+      .catch(err => console.log(err));
+  };
+}
+
+const actions = {getBreeds, getBreedByName, getTemperaments};
 export default actions;

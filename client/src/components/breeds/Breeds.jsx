@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom'
-import { getBreeds, getBreedByName } from '../../actions/index';
+import { getBreeds, getBreedByName, getTemperaments } from '../../actions/index';
 import style from './Breeds.module.css';
 
 function Breeds(props) {
@@ -10,8 +10,8 @@ function Breeds(props) {
     const [limit] = useState(8);
     const [offset, setOffset] = useState(0);
     const [filter, setFilter] = useState({
-        option: '',
-        value: ''
+        option: 'temperament',
+        value: 'none'
     });
     const [order, setOrder] = useState({
         option: 'name',
@@ -21,10 +21,11 @@ function Breeds(props) {
 
     useEffect(() => {
         if(breedToSearch) {
-            props.getBreedByName(offset, order, breedToSearch);
+            props.getBreedByName(offset, order, filter, breedToSearch);
         } else {
-            props.getBreeds(offset, order);  // , filter, order
+            props.getBreeds(offset, order, filter);
         }
+        props.getTemperaments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [offset, limit, filter, order, breedToSearch]);
 
@@ -59,6 +60,18 @@ function Breeds(props) {
         }
         return pageItems;
     }
+    function showTemperaments() {
+        return (props.temperaments.rows && props.temperaments.rows.length > 0)
+        ? props.temperaments.rows.map( (temperament, index) => <option 
+            key={temperament.id}
+            value={temperament.name}
+        >   
+            {temperament.name}
+        </option>
+
+        )
+        : <option value="none">Loading breeds...</option>
+    }
 
     function handleClick(e) {
         const page = e.target.childNodes[0].data;
@@ -73,10 +86,17 @@ function Breeds(props) {
         console.log(e);
     }
     function handleChangeFilter(e) {
-        setFilter({
-            continent: e.target.value,
-            activity: ''
-        })
+        if(e.target.name === 'filterOption') {
+            setFilter({
+                ...filter,
+                option: e.target.value
+            });
+        } else if(e.target.name === 'filterValue') {
+            setFilter({
+                ...filter,
+                value: e.target.value
+            });
+        }
     }
     function handleChangeOrder(e) {
         if(e.target.name === 'orderOption') {
@@ -116,6 +136,10 @@ function Breeds(props) {
                     <option value="temperament">Temperament</option>
                     <option value="breed">Breed</option>
                 </select>
+                <select name="filterValue" value={filter.temperament} onChange={handleChangeFilter}>
+                    <option value="none"> - </option>
+                    {showTemperaments()}
+                </select>
                 <hr/>
                 {/* <input type="submit" value="Submit"/> */}
             </form>
@@ -133,12 +157,13 @@ function Breeds(props) {
 
 function mapStateToProps(state) {
     return {
-        breeds: state.breeds
+        breeds: state.breeds,
+        temperaments: state.temperaments
     }
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({getBreeds, getBreedByName}, dispatch);
+    return bindActionCreators({getBreeds, getBreedByName, getTemperaments}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Breeds);
