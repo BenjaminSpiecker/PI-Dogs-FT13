@@ -1,6 +1,9 @@
 const initialState = {
     temperaments: [],
     breeds: [],
+    breed: {},
+    offset: 0, 
+    limit: 8, 
 }
 
 export default function reducer(state = initialState, action) {
@@ -19,6 +22,11 @@ export default function reducer(state = initialState, action) {
             return {
                 ...state,
                 temperaments: action.payload
+            };
+        case 'GET_BREED_BY_ID':
+            return {
+                ...state,
+                breed: action.payload
             };
         default:
             return state;

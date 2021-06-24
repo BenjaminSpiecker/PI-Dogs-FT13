@@ -1,6 +1,7 @@
 const { Breed, Temperament } = require('../db');
 const { Sequelize, Op } = require('sequelize');
 const axios = require('axios');
+const uuid4 = require('uuid4');
 
  async function getAllBreedsFromApi() {
    try {
@@ -12,7 +13,7 @@ const axios = require('axios');
       const [min_ls, max_ls] = stringParseToNumbers(breed.life_span);
 
       const createdBreed = await Breed.create({
-        id: breed.id,
+        id: uuid4(),
         name: breed.name,
         height_max: max_h,
         height_min: min_h,
@@ -50,7 +51,7 @@ async function getAllBreeds(req, res, next) {
 
   try {
     const rows = await Breed.findAll({
-      attributes: ['id', 'name', 'image_url'],
+      // attributes: ['id', 'name', 'image_url'],
       include: [{
         model: Temperament,
         attributes: [ 'id','name'],
@@ -214,6 +215,57 @@ async function getBreedByNameFiltered(req,res,next) {
     next(error);
   }
 }
+async function getBreedById(req,res,next) {
+  try {
+    const breedFound = await Breed.findByPk(req.query.id);
+    console.log(breedFound);
+    return res.send(breedFound);
+  } catch (error) {
+   next(error);
+  }
+}
+
+async function postBreed(req,res,next) {
+  console.log(req.body);
+  const {name, height_max, height_min, weight_max, 
+    weight_min, life_span, temperaments} = req.body;
+
+  if(!name || !height_max || !height_min || !weight_max
+    || !weight_min || !life_span || !temperaments) {
+      return res.status(400).send('wrong post');
+    } 
+  
+  try {
+    const createdBreed = await Breed.create({
+      id: uuid4(),
+      name: name,
+      height_max: height_max,
+      height_min: height_min,
+      weight_max: weight_max,
+      weight_min: weight_min,
+      life_span_max: life_span,
+      life_span_min: life_span,
+      // image_url: breed.image.url,
+      // image_id: breed.image.id
+    });
+
+    if(temperaments.length > 0) {
+      temperaments.map( async (temp) => {
+        const [temperament, created] = await Temperament.findOrCreate({
+          where: { name: temp },
+          default: {
+            name: temp
+          }
+        });
+        await createdBreed.addTemperament(temperament);
+      });
+    }
+    return res.status(200).send('correct post');
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send('wrong post')
+  }
+}
 
 function stringParseToNumbers(string) {
   let numbers = [];
@@ -243,5 +295,7 @@ module.exports = {
   getAllBreedsFromApi,
   getAllBreeds,
   getAllBreedsFiltered,
-  getBreedByNameFiltered
+  getBreedByNameFiltered,
+  getBreedById,
+  postBreed
 }

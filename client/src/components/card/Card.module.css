@@ -1,0 +1,18 @@
+.card {
+    width: 15rem;
+    margin: 0.5rem;
+    border: 1px solid lightgray;
+    border-radius: 0.3rem;
+}
+.cardImgTop {
+    width: 100%;
+}
+.cardBody {
+    
+}
+.cardTitle {
+    
+}
+.cardText {
+    
+}

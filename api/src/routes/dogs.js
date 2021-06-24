@@ -4,12 +4,16 @@ const {
     getAllBreeds, 
     getAllBreedsFiltered, 
     getBreedByName, 
-    getBreedByNameFiltered } = require('../controllers/breeds');
+    getBreedByNameFiltered,
+    getBreedById,
+    postBreed } = require('../controllers/breeds');
 
 const router = Router();
 
-router.use('/', (req, res, next)  => {
-    
+router.get('/', (req, res, next)  => {
+    if(req.query.id) {
+        return getBreedById(req,res,next);
+    }
     (!req.query.orderOption) 
         ? req.query.orderOption = 'name' 
         : req.query.orderOption;
@@ -37,7 +41,8 @@ router.use('/', (req, res, next)  => {
             return getAllBreeds(req, res, next);
         }
     }
-})
+});
 
-router.use('/:id', )
+router.post('/', (req,res,next) => postBreed(req,res,next));
+
 module.exports = router;

@@ -56,5 +56,22 @@ export function getTemperaments() {
   };
 }
 
-const actions = {getBreeds, getBreedByName, getTemperaments};
+export function getBreedById(id) {
+  return function (dispatch) {
+    return axios.get(`http://localhost:3001/dogs?id=${id}`)
+      .then(response => response.data)
+      .then(data => {
+        dispatch({ type: "GET_BREED_BY_ID", payload: data});
+      })
+      .catch(err => console.log(err));
+  }
+}
+
+export function postBreed(payload) {
+  return axios.post('http://localhost:3001/dogs', payload)
+    .then(response => console.log(response))
+    .catch( error => console.log(error));
+}
+
+const actions = {getBreeds, getBreedByName, getTemperaments, postBreed, getBreedById};
 export default actions;
